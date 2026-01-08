@@ -1,24 +1,20 @@
 #!/usr/bin/env perl
 
-my @files = glob("*/config.ini");
+use strict;
+use warnings;
 
-foreach $file (@files) {
+for my $file (glob("*/config.ini")) {
   print "$file\n";
-  my $systemImagePath;
-  my $systemImagePackage;
-  open(CONFIG, "<$file") || die "Could not open $file:$1";
-  while(<CONFIG>){
-    $systemImagePath = $1 if /image.sysdir.1=(.*)\//
+  open my $fh, "<", $file or die "Could not open $file: $!";
+  while (<$fh>) {
+    if (/image\.sysdir\.1=(.*)\//) {
+      my $package = $1;
+      $package =~ s/\//;/g;
+      print "Path $package\n";
+      system("sdkmanager '$package'");
+      last;
+    }
   }
-  close(CONFIG);
-  if ($systemImagePath) {
-    $systemImagePackage = $systemImagePath;
-    $systemImagePackage =~ s/\//;/g;
-  }
-  # image.sysdir.1
-
-  print "Path $systemImagePackage\n";
-  system("sdkmanager '$systemImagePackage'");
-  
+  close $fh;
 }
 
