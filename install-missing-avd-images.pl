@@ -13,7 +13,6 @@ for my $file (glob("*/config.ini")) {
       $package =~ s/\//;/g;
       print "Path $package\n";
       system("sdkmanager '$package'");
-      last;
     }
   }
   close $fh;
