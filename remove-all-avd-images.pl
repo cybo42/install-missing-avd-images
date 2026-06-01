@@ -7,6 +7,17 @@ use Getopt::Long;
 my $delete = 0;
 GetOptions("delete|d" => \$delete) or die "Usage: $0 [-d|--delete]\n";
 
+sub avd_dir {
+  return $ENV{ANDROID_AVD_HOME} if $ENV{ANDROID_AVD_HOME};
+  return "$ENV{ANDROID_EMULATOR_HOME}/avd" if $ENV{ANDROID_EMULATOR_HOME};
+  return "$ENV{ANDROID_USER_HOME}/avd" if $ENV{ANDROID_USER_HOME};
+  return "$ENV{HOME}/.android/avd";
+}
+
+my $avd = avd_dir();
+chdir $avd or die "Could not chdir to AVD directory $avd: $!\n";
+print "Using AVD directory: $avd\n";
+
 print "Reading installed system images from sdkmanager...\n";
 
 my %installed;
